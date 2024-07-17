@@ -1,15 +1,41 @@
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
-function AddTask() {
+import axios from "axios";
+
+function AddTask(props) {
+
+  const params = useParams()
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // ...logic for creating a new Task should be here
     // ... the ID of the Project should be part of the Task data
+
+    const newTask = {
+      title: title,
+      description: description,
+      projectId: Number(params.projectId) // si usamos params, debemos cambiarlo a Number
+    }
+
+    try {
+
+      await axios.post( `${import.meta.env.VITE_SERVER_URL}/tasks`, newTask )
+
+      // indicar a React que debe buscar la información actualizada
+      props.getData()
+
+      // Opcional para limpiar los campos
+      setTitle("")
+      setDescription("")
+      
+    } catch (error) {
+      console.log(error)
+    }
 
   };
   
